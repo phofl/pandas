@@ -16,6 +16,7 @@ from pandas import (
     DataFrame,
     DatetimeIndex,
     Float64Index,
+    Index,
     Int64Index,
     IntervalIndex,
     MultiIndex,
@@ -24,7 +25,6 @@ from pandas import (
     Series,
     TimedeltaIndex,
     UInt64Index,
-    Index,
 )
 import pandas._testing as tm
 from pandas.api.types import CategoricalDtype as CDT
@@ -2240,3 +2240,12 @@ def test_categorical_non_unique_monotonic(n_categories):
         index=left_index,
     )
     tm.assert_frame_equal(expected, result)
+
+
+def test_right_index_true_right_join_target_index():
+    df_left = pd.DataFrame(index=["a", "b"])
+    df_right = pd.DataFrame({"x": ["a", "c"]})
+
+    result = pd.merge(df_left, df_right, left_index=True, right_on="x", how="left")
+    expected = pd.DataFrame({"x": ["a", "b"]}, index=Index(["a", "b"]))
+    tm.assert_frame_equal(result, expected)
