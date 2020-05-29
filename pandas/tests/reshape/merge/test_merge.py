@@ -24,6 +24,7 @@ from pandas import (
     Series,
     TimedeltaIndex,
     UInt64Index,
+    Index,
 )
 import pandas._testing as tm
 from pandas.api.types import CategoricalDtype as CDT
@@ -361,7 +362,9 @@ class TestMerge:
 
         key = np.array([0, 1, 1, 2, 2, 3], dtype=np.int64)
         merged = merge(left, right, left_index=True, right_on=key, how="outer")
-        tm.assert_series_equal(merged["key_0"], Series(key, name="key_0", index=[0, 1, 1, 2, 2, np.nan]))
+        tm.assert_series_equal(
+            merged["key_0"], Series(key, name="key_0", index=[0, 1, 1, 2, 2, np.nan])
+        )
 
     def test_no_overlap_more_informative_error(self):
         dt = datetime.now()
@@ -472,7 +475,10 @@ class TestMerge:
         def check2(exp, kwarg):
             result = pd.merge(left, right, how="right", **kwarg)
             tm.assert_frame_equal(result, exp)
+
+        def check3(exp, kwarg, index):
             result = pd.merge(left, right, how="outer", **kwarg)
+            exp.index = index
             tm.assert_frame_equal(result, exp)
 
         for kwarg in [
@@ -480,7 +486,14 @@ class TestMerge:
             dict(left_index=True, right_on="x"),
         ]:
             check1(exp_in, kwarg)
-            # check2(exp_out, kwarg)
+            check2(exp_out, kwarg)
+
+        check3(exp_out, dict(left_index=True, right_index=True), exp_out.index)
+        check3(
+            exp_out.copy(),
+            dict(left_index=True, right_on="x"),
+            Index([np.nan, np.nan, np.nan]),
+        )
 
         kwarg = dict(left_on="a", right_index=True)
         check1(exp_in, kwarg)
