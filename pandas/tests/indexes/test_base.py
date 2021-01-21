@@ -9,7 +9,7 @@ import numpy as np
 import pytest
 
 from pandas._libs.tslib import Timestamp
-from pandas.compat import IS64, np_datetime64_compat
+from pandas.compat import IS64
 from pandas.util._test_decorators import async_mark
 
 import pandas as pd
@@ -283,9 +283,7 @@ class TestIndex(Base):
         [
             [1, 2, 3],
             np.array([1, 2, 3], dtype=int),
-            np.array(
-                [np_datetime64_compat("2011-01-01"), np_datetime64_compat("2011-01-02")]
-            ),
+            np.array([np.datetime64("2011-01-01"), np.datetime64("2011-01-02")]),
             [datetime(2011, 1, 1), datetime(2011, 1, 2)],
         ],
     )
@@ -297,14 +295,7 @@ class TestIndex(Base):
     @pytest.mark.parametrize(
         "vals",
         [
-            Index(
-                np.array(
-                    [
-                        np_datetime64_compat("2011-01-01"),
-                        np_datetime64_compat("2011-01-02"),
-                    ]
-                )
-            ),
+            Index(np.array([np.datetime64("2011-01-01"), np.datetime64("2011-01-02")])),
             Index([datetime(2011, 1, 1), datetime(2011, 1, 2)]),
         ],
     )
@@ -570,10 +561,7 @@ class TestIndex(Base):
 
         first_value = x.asof(x.index[0])
 
-        # this does not yet work, as parsing strings is done via dateutil
-        # assert first_value == x['2013-01-01 00:00:00.000000050+0000']
-
-        expected_ts = np_datetime64_compat("2013-01-01 00:00:00.000000050+0000", "ns")
+        expected_ts = np.datetime64("2013-01-01 00:00:00.000000050+0000")
         assert first_value == x[Timestamp(expected_ts)]
 
     @pytest.mark.parametrize("index", ["string"], indirect=True)

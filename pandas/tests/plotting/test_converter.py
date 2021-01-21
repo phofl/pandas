@@ -7,7 +7,7 @@ import pytest
 
 import pandas._config.config as cf
 
-from pandas.compat import is_platform_windows, np_datetime64_compat
+from pandas.compat import is_platform_windows
 import pandas.util._test_decorators as td
 
 from pandas import Index, Period, Series, Timestamp, date_range
@@ -176,19 +176,17 @@ class TestDateTimeConverter:
         assert rs == xp
 
         # also testing datetime64 dtype (GH8614)
-        rs = self.dtc.convert(np_datetime64_compat("2012-01-01"), None, None)
+        rs = self.dtc.convert(np.datetime64("2012-01-01"), None, None)
         assert rs == xp
 
-        rs = self.dtc.convert(
-            np_datetime64_compat("2012-01-01 00:00:00+0000"), None, None
-        )
+        rs = self.dtc.convert(np.datetime64("2012-01-01 00:00:00+0000"), None, None)
         assert rs == xp
 
         rs = self.dtc.convert(
             np.array(
                 [
-                    np_datetime64_compat("2012-01-01 00:00:00+0000"),
-                    np_datetime64_compat("2012-01-02 00:00:00+0000"),
+                    np.datetime64("2012-01-01 00:00:00+0000"),
+                    np.datetime64("2012-01-02 00:00:00+0000"),
                 ]
             ),
             None,
@@ -325,19 +323,17 @@ class TestPeriodConverter:
         rs = self.pc.convert(Timestamp("2012-1-1"), None, self.axis)
         assert rs == xp
 
-        rs = self.pc.convert(np_datetime64_compat("2012-01-01"), None, self.axis)
+        rs = self.pc.convert(np.datetime64("2012-01-01"), None, self.axis)
         assert rs == xp
 
-        rs = self.pc.convert(
-            np_datetime64_compat("2012-01-01 00:00:00+0000"), None, self.axis
-        )
+        rs = self.pc.convert(np.datetime64("2012-01-01 00:00:00+0000"), None, self.axis)
         assert rs == xp
 
         rs = self.pc.convert(
             np.array(
                 [
-                    np_datetime64_compat("2012-01-01 00:00:00+0000"),
-                    np_datetime64_compat("2012-01-02 00:00:00+0000"),
+                    np.datetime64("2012-01-01 00:00:00+0000"),
+                    np.datetime64("2012-01-02 00:00:00+0000"),
                 ]
             ),
             None,

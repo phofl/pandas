@@ -7,7 +7,6 @@ import numpy as np
 import pytest
 
 from pandas._libs.tslibs.offsets import ApplyTypeError, BDay, BMonthEnd, CDay
-from pandas.compat import np_datetime64_compat
 
 from pandas import DatetimeIndex, _testing as tm, read_pickle
 from pandas.tests.tseries.offsets.common import (
@@ -206,7 +205,7 @@ class TestCustomBusinessDay(Base):
 
     def setup_method(self, method):
         self.d = datetime(2008, 1, 1)
-        self.nd = np_datetime64_compat("2008-01-01 00:00:00Z")
+        self.nd = np.datetime64("2008-01-01 00:00:00Z")
 
         self.offset = CDay()
         self.offset1 = self.offset

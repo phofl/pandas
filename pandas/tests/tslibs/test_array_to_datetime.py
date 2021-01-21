@@ -6,7 +6,6 @@ import pytest
 import pytz
 
 from pandas._libs import iNaT, tslib
-from pandas.compat import np_array_datetime64_compat
 
 from pandas import Timestamp
 import pandas._testing as tm
@@ -35,7 +34,7 @@ def test_parsing_valid_dates(data, expected):
     arr = np.array(data, dtype=object)
     result, _ = tslib.array_to_datetime(arr)
 
-    expected = np_array_datetime64_compat(expected, dtype="M8[ns]")
+    expected = np.array(expected, dtype="M8[ns]")
     tm.assert_numpy_array_equal(result, expected)
 
 
@@ -136,7 +135,7 @@ def test_coerce_outside_ns_bounds_one_valid():
     result, _ = tslib.array_to_datetime(arr, errors="coerce")
 
     expected = [iNaT, "2000-01-01T00:00:00.000000000-0000"]
-    expected = np_array_datetime64_compat(expected, dtype="M8[ns]")
+    expected = np.array(expected, dtype="M8[ns]")
 
     tm.assert_numpy_array_equal(result, expected)
 
@@ -156,9 +155,7 @@ def test_coerce_of_invalid_datetimes(errors):
         result, _ = tslib.array_to_datetime(arr, errors="coerce")
         expected = ["2013-01-01T00:00:00.000000000-0000", iNaT, iNaT]
 
-        tm.assert_numpy_array_equal(
-            result, np_array_datetime64_compat(expected, dtype="M8[ns]")
-        )
+        tm.assert_numpy_array_equal(result, np.array(expected, dtype="M8[ns]"))
 
 
 def test_to_datetime_barely_out_of_bounds():
@@ -193,5 +190,5 @@ def test_datetime_subclass(data, expected):
     arr = np.array(data, dtype=object)
     result, _ = tslib.array_to_datetime(arr)
 
-    expected = np_array_datetime64_compat(expected, dtype="M8[ns]")
+    expected = np.array(expected, dtype="M8[ns]")
     tm.assert_numpy_array_equal(result, expected)

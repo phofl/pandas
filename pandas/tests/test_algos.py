@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 
 from pandas._libs import algos as libalgos, hashtable as ht
-from pandas.compat import IS64, np_array_datetime64_compat
+from pandas.compat import IS64
 import pandas.util._test_decorators as td
 
 from pandas.core.dtypes.common import (
@@ -524,7 +524,7 @@ class TestUnique:
 
     def test_datetime64_dtype_array_returned(self):
         # GH 9431
-        expected = np_array_datetime64_compat(
+        expected = np.array(
             [
                 "2015-01-03T00:00:00.000000000+0000",
                 "2015-01-01T00:00:00.000000000+0000",

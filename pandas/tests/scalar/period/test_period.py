@@ -10,7 +10,6 @@ from pandas._libs.tslibs.np_datetime import OutOfBoundsDatetime
 from pandas._libs.tslibs.parsing import DateParseError
 from pandas._libs.tslibs.period import INVALID_FREQ_ERR_MSG, IncompatibleFrequency
 from pandas._libs.tslibs.timezones import dateutil_gettz, maybe_get_tz
-from pandas.compat import np_datetime64_compat
 
 import pandas as pd
 from pandas import NaT, Period, Timedelta, Timestamp, offsets
@@ -59,14 +58,14 @@ class TestPeriodConstruction:
         expected = Period(datetime(2007, 1, 1, 9, 0, 0, 1000), freq="L")
         assert i1 == expected
 
-        expected = Period(np_datetime64_compat("2007-01-01 09:00:00.001Z"), freq="L")
+        expected = Period(np.datetime64("2007-01-01 09:00:00.001Z"), freq="L")
         assert i1 == expected
 
         i1 = Period("2007-01-01 09:00:00.00101")
         expected = Period(datetime(2007, 1, 1, 9, 0, 0, 1010), freq="U")
         assert i1 == expected
 
-        expected = Period(np_datetime64_compat("2007-01-01 09:00:00.00101Z"), freq="U")
+        expected = Period(np.datetime64("2007-01-01 09:00:00.00101Z"), freq="U")
         assert i1 == expected
 
         msg = "Must supply freq for ordinal value"
@@ -157,8 +156,8 @@ class TestPeriodConstruction:
         i1 = Period(date(2007, 1, 1), freq="M")
         i2 = Period(datetime(2007, 1, 1), freq="M")
         i3 = Period(np.datetime64("2007-01-01"), freq="M")
-        i4 = Period(np_datetime64_compat("2007-01-01 00:00:00Z"), freq="M")
-        i5 = Period(np_datetime64_compat("2007-01-01 00:00:00.000Z"), freq="M")
+        i4 = Period(np.datetime64("2007-01-01 00:00:00Z"), freq="M")
+        i5 = Period(np.datetime64("2007-01-01 00:00:00.000Z"), freq="M")
         assert i1 == i2
         assert i1 == i3
         assert i1 == i4
@@ -212,8 +211,8 @@ class TestPeriodConstruction:
         i1 = Period(date(2007, 1, 1), freq="M")
         i2 = Period(datetime(2007, 1, 1), freq="M")
         i3 = Period(np.datetime64("2007-01-01"), freq="M")
-        i4 = Period(np_datetime64_compat("2007-01-01 00:00:00Z"), freq="M")
-        i5 = Period(np_datetime64_compat("2007-01-01 00:00:00.000Z"), freq="M")
+        i4 = Period(np.datetime64("2007-01-01 00:00:00Z"), freq="M")
+        i5 = Period(np.datetime64("2007-01-01 00:00:00.000Z"), freq="M")
         assert i1 == i2
         assert i1 == i3
         assert i1 == i4
@@ -223,14 +222,14 @@ class TestPeriodConstruction:
         expected = Period(datetime(2007, 1, 1, 9, 0, 0, 1000), freq="L")
         assert i1 == expected
 
-        expected = Period(np_datetime64_compat("2007-01-01 09:00:00.001Z"), freq="L")
+        expected = Period(np.datetime64("2007-01-01 09:00:00.001Z"), freq="L")
         assert i1 == expected
 
         i1 = Period("2007-01-01 09:00:00.00101")
         expected = Period(datetime(2007, 1, 1, 9, 0, 0, 1010), freq="U")
         assert i1 == expected
 
-        expected = Period(np_datetime64_compat("2007-01-01 09:00:00.00101Z"), freq="U")
+        expected = Period(np.datetime64("2007-01-01 09:00:00.00101Z"), freq="U")
         assert i1 == expected
 
     def test_invalid_arguments(self):
