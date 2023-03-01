@@ -21,7 +21,7 @@ jobs:
     steps:
     - name: Checkout
       run: |
-        echo "Adding deprecation to issue"
+        echo "Adding deprecation pr number to issue"
         ISSUENR=2
         export PR=${{ github.event.pull_request.number }}
         BODY=$(curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/issues/${ISSUENR} |
