@@ -22,7 +22,7 @@ jobs:
     - name: Checkout
       run: |
         echo "Adding deprecation pr number to issue"
-        echo "${{ github.event.pull_request.merged }}"
+        echo ${{ github.event.pull_request.merged }} == false
         ISSUENR=2
         export PR=${{ github.event.pull_request.number }}
         BODY=$(curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/issues/${ISSUENR} |
