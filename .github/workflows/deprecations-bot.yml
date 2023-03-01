@@ -16,7 +16,7 @@ jobs:
     permissions:
       issues: write
     if: >-
-      contains(github.event.pull_request.labels.*.name, 'Deprecate')
+      contains(github.event.pull_request.labels.*.name, 'Deprecate') && github.event.pull_request.merged == true
     runs-on: ubuntu-22.04
     steps:
     - name: Checkout
