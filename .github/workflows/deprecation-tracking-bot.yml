@@ -15,7 +15,7 @@ jobs:
       contains(github.event.pull_request.labels.*.name, 'Deprecate')
     runs-on: ubuntu-22.04
     env:
-      DEPRECATION_TRACKER_ISSUE: 50578
+      DEPRECATION_TRACKER_ISSUE: 2
     steps:
     - name: Checkout
       run: |
