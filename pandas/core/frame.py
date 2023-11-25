@@ -63,6 +63,7 @@ from pandas.errors import (
     _chained_assignment_method_msg,
     _chained_assignment_msg,
     _chained_assignment_warning_method_msg,
+    _chained_assignment_warning_msg,
 )
 from pandas.util._decorators import (
     Appender,
@@ -4200,11 +4201,21 @@ class DataFrame(NDFrame, OpsMixin):
         self._iset_item_mgr(loc, arraylike, inplace=False, refs=refs)
 
     def __setitem__(self, key, value) -> None:
-        if not PYPY and using_copy_on_write():
-            if sys.getrefcount(self) <= 3:
-                warnings.warn(
-                    _chained_assignment_msg, ChainedAssignmentError, stacklevel=2
-                )
+        if not PYPY:
+            if using_copy_on_write():
+                if sys.getrefcount(self) <= 3:
+                    warnings.warn(
+                        _chained_assignment_msg, ChainedAssignmentError, stacklevel=2
+                    )
+            else:
+                ctr = sys.getrefcount(self)
+                ref_count = REF_COUNT
+                if ctr <= ref_count:
+                    warnings.warn(
+                        _chained_assignment_warning_msg,
+                        FutureWarning,
+                        stacklevel=2,
+                    )
 
         key = com.apply_if_callable(key, self)
 

@@ -45,6 +45,7 @@ from pandas.errors import (
     _chained_assignment_method_msg,
     _chained_assignment_msg,
     _chained_assignment_warning_method_msg,
+    _chained_assignment_warning_msg,
 )
 from pandas.util._decorators import (
     Appender,
@@ -1228,11 +1229,28 @@ class Series(base.IndexOpsMixin, NDFrame):  # type: ignore[misc]
             return self.iloc[loc]
 
     def __setitem__(self, key, value) -> None:
-        if not PYPY and using_copy_on_write():
-            if sys.getrefcount(self) <= 3:
-                warnings.warn(
-                    _chained_assignment_msg, ChainedAssignmentError, stacklevel=2
-                )
+        if not PYPY:
+            if using_copy_on_write():
+                if sys.getrefcount(self) <= 3:
+                    warnings.warn(
+                        _chained_assignment_msg, ChainedAssignmentError, stacklevel=2
+                    )
+            else:
+                ctr = sys.getrefcount(self)
+                ref_count = REF_COUNT
+                if hasattr(self, "_cacher"):
+                    # in non-CoW mode, chained Series access will populate the
+                    # `_item_cache` which results in an increased ref count not below
+                    # the threshold, while we still need to warn. We detect this case
+                    # of a Series derived from a DataFrame through the presence of
+                    # `_cacher`
+                    ref_count += 1
+                if ctr <= ref_count:
+                    warnings.warn(
+                        _chained_assignment_warning_msg,
+                        FutureWarning,
+                        stacklevel=2,
+                    )
 
         check_dict_or_set_indexers(key)
         key = com.apply_if_callable(key, self)

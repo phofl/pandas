@@ -25,6 +25,8 @@ from pandas.errors import (
     InvalidIndexError,
     LossySetitemError,
     _chained_assignment_msg,
+    _chained_assignment_warning_msg,
+    _check_cacher,
 )
 from pandas.util._decorators import doc
 from pandas.util._exceptions import find_stack_level
@@ -876,11 +878,26 @@ class _LocationIndexer(NDFrameIndexerBase):
 
     @final
     def __setitem__(self, key, value) -> None:
-        if not PYPY and using_copy_on_write():
-            if sys.getrefcount(self.obj) <= 2:
-                warnings.warn(
-                    _chained_assignment_msg, ChainedAssignmentError, stacklevel=2
-                )
+        if not PYPY:
+            ctr = sys.getrefcount(self.obj)
+            print(ctr)
+            if using_copy_on_write():
+                if ctr <= 2:
+                    warnings.warn(
+                        _chained_assignment_msg, ChainedAssignmentError, stacklevel=2
+                    )
+            else:
+                ref_count = 2
+                # iloc does not properly initiate the cache which screws with us here
+                if isinstance(self.obj, ABCSeries) and _check_cacher(self.obj):
+                    ref_count += 1
+
+                if ctr <= ref_count:
+                    warnings.warn(
+                        _chained_assignment_warning_msg,
+                        FutureWarning,
+                        stacklevel=2,
+                    )
 
         check_dict_or_set_indexers(key)
         if isinstance(key, tuple):

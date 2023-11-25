@@ -122,9 +122,7 @@ class TestXS:
         result = df.xs((2008, "sat"), level=["year", "day"], drop_level=False)
         tm.assert_frame_equal(result, expected)
 
-    def test_xs_view(
-        self, using_array_manager, using_copy_on_write, warn_copy_on_write
-    ):
+    def test_xs_view(self, using_copy_on_write):
         # in 0.14 this will return a view if possible a copy otherwise, but
         # this is numpy dependent
 
@@ -135,16 +133,8 @@ class TestXS:
             with tm.raises_chained_assignment_error():
                 dm.xs(2)[:] = 20
             tm.assert_frame_equal(dm, df_orig)
-        elif using_array_manager:
-            # INFO(ArrayManager) with ArrayManager getting a row as a view is
-            # not possible
-            msg = r"\nA value is trying to be set on a copy of a slice from a DataFrame"
-            with pytest.raises(SettingWithCopyError, match=msg):
-                dm.xs(2)[:] = 20
-            assert not (dm.xs(2) == 20).any()
         else:
-            # TODO(CoW-warn) should this raise a specific warning about being chained?
-            with tm.assert_cow_warning(warn_copy_on_write):
+            with tm.assert_cow_warning(match="A value"):
                 dm.xs(2)[:] = 20
             assert (dm.xs(2) == 20).all()
 

@@ -539,25 +539,22 @@ def test_frame_setitem_view_direct(
 
 
 def test_frame_setitem_copy_raises(
-    multiindex_dataframe_random_data, using_copy_on_write, warn_copy_on_write
+    multiindex_dataframe_random_data, using_copy_on_write
 ):
     # will raise/warn as its chained assignment
     df = multiindex_dataframe_random_data.T
     if using_copy_on_write:
         with tm.raises_chained_assignment_error():
             df["foo"]["one"] = 2
-    elif warn_copy_on_write:
-        # TODO(CoW-warn) should warn
-        with tm.assert_cow_warning(False):
-            df["foo"]["one"] = 2
     else:
         msg = "A value is trying to be set on a copy of a slice from a DataFrame"
         with pytest.raises(SettingWithCopyError, match=msg):
-            df["foo"]["one"] = 2
+            with tm.assert_cow_warning(match="A value"):
+                df["foo"]["one"] = 2
 
 
 def test_frame_setitem_copy_no_write(
-    multiindex_dataframe_random_data, using_copy_on_write, warn_copy_on_write
+    multiindex_dataframe_random_data, using_copy_on_write
 ):
     frame = multiindex_dataframe_random_data.T
     expected = frame
@@ -565,14 +562,11 @@ def test_frame_setitem_copy_no_write(
     if using_copy_on_write:
         with tm.raises_chained_assignment_error():
             df["foo"]["one"] = 2
-    elif warn_copy_on_write:
-        # TODO(CoW-warn) should warn
-        with tm.assert_cow_warning(False):
-            df["foo"]["one"] = 2
     else:
         msg = "A value is trying to be set on a copy of a slice from a DataFrame"
         with pytest.raises(SettingWithCopyError, match=msg):
-            df["foo"]["one"] = 2
+            with tm.assert_cow_warning(match="A value"):
+                df["foo"]["one"] = 2
 
     result = df
     tm.assert_frame_equal(result, expected)
