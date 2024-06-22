@@ -46,7 +46,7 @@ github:
     main: true
     # enable for other branches (defaults to false)
     branches: false
-    # enable for pull requests coming from this repo (defaults to true)
+    # enable for pull requests coming from this repo (defaults to true) bla
     pullRequests: false
     # enable for pull requests coming from forks (defaults to false)
     pullRequestsFromForks: false
