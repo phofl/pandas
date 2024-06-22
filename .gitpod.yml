@@ -42,7 +42,7 @@ vscode:
 # With this configuration the prebuild will happen on push to main
 github:
   prebuilds:
-    # enable for main/default branch
+    # enable for main/default branch bla
     main: true
     # enable for other branches (defaults to false)
     branches: false
